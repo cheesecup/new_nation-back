@@ -5,7 +5,6 @@ import com.newnation.article.dto.ArticleResponseDTO;
 import com.newnation.article.entity.Article;
 import com.newnation.article.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +69,5 @@ public class ArticleService {
     private Article articleExists(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
-                .imgUrl(imgUrl)
-                .build();
     }
 }
