@@ -28,6 +28,12 @@ public class Article extends TimeStamped {
 
     protected Article() {}
 
+    public void updateArticle(ArticleRequestDTO requestDTO) {
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContent();
+        this.category = requestDTO.getCategory();
+    }
+
     public Article(ArticleRequestDTO requestDTO) {
         this.title = requestDTO.getTitle();
         this.content = requestDTO.getContent();
