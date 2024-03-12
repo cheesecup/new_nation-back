@@ -3,6 +3,7 @@ package com.newnation.article.service;
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
 import com.newnation.article.entity.Article;
+import com.newnation.article.entity.ArticleImg;
 import com.newnation.article.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,12 @@ public class ArticleService {
         return responseDTO;
     }
 
+    @Transactional
     public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) throws Exception {
-
-        Article article = articleRepository.save(new Article(requestDTO));
-
         // 이미지 저장
-        String imgUrl = articleImgService.createArticleImg(requestDTO.getImg());
+        ArticleImg articleImg = articleImgService.createArticleImg(requestDTO.getImg());
+
+        Article article = articleRepository.save(new Article(requestDTO, articleImg));
 
         return ArticleResponseDTO.builder()
                 .articleId(article.getArticleId())
@@ -50,7 +51,7 @@ public class ArticleService {
                 .content(article.getContent())
                 .category(article.getCategory())
                 .createdAt(article.getCreatedAt())
-                .imgUrl(imgUrl)
+                .imgUrl(article.getArticleImg().getImgUrl())
                 .build();
     }
 

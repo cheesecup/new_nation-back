@@ -27,4 +27,10 @@ public class ArticleImg {
         this.savedImgName = savedImgName;
         this.oriImgName = oriImgName;
     }
+
+    public void updateArticleImg(String imgUrl, String savedImgName, String oriImgName) {
+        this.imgUrl = imgUrl;
+        this.savedImgName = savedImgName;
+        this.oriImgName = oriImgName;
+    }
 }

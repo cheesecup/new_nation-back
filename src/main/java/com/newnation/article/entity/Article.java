@@ -34,9 +34,10 @@ public class Article extends TimeStamped {
         this.category = requestDTO.getCategory();
     }
 
-    public Article(ArticleRequestDTO requestDTO) {
+    public Article(ArticleRequestDTO requestDTO, ArticleImg articleImg) {
         this.title = requestDTO.getTitle();
         this.content = requestDTO.getContent();
         this.category = requestDTO.getCategory();
+        this.articleImg = articleImg;
     }
 }
