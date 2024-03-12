@@ -27,15 +27,32 @@ public class ArticleService {
         article.updateArticle(requestDTO);
 
         ArticleResponseDTO responseDTO = ArticleResponseDTO.builder()
+                          .articleId(article.getArticleId())
+                          .title(article.getTitle())
+                          .content(article.getContent())
+                          .category(article.getCategory())
+                          .createdAt(article.getCreatedAt())
+                          //.imgUrl(article.getImgUrl())
+                          .build();
+  
+        return responseDTO;
+    }
+
+    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) throws Exception {
+
+        Article article = articleRepository.save(new Article(requestDTO));
+
+        // 이미지 저장
+        String imgUrl = articleImgService.createArticleImg(requestDTO.getImg());
+
+        return ArticleResponseDTO.builder()
                 .articleId(article.getArticleId())
                 .title(article.getTitle())
                 .content(article.getContent())
                 .category(article.getCategory())
                 .createdAt(article.getCreatedAt())
-                //.imgUrl(article.getImgUrl())
+                .imgUrl(imgUrl)
                 .build();
-
-        return responseDTO;
     }
 
     public void deleteArticle(Long articleId) {
@@ -53,5 +70,7 @@ public class ArticleService {
     private Article articleExists(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+                .imgUrl(imgUrl)
+                .build();
     }
 }
