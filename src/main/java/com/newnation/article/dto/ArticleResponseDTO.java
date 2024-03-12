@@ -1,5 +1,6 @@
 package com.newnation.article.dto;
 
+import com.newnation.article.entity.Article;
 import com.newnation.article.entity.Category;
 import lombok.Builder;
 import lombok.Getter;

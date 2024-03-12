@@ -1,5 +1,6 @@
 package com.newnation.article.entity;
 
+import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.global.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,4 +23,10 @@ public class Article extends TimeStamped {
     private Category category;
 
     protected Article() {}
+
+    public void updateArticle(ArticleRequestDTO requestDTO) {
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContent();
+        this.category = requestDTO.getCategory();
+    }
 }
