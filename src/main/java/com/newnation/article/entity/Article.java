@@ -1,5 +1,6 @@
 package com.newnation.article.entity;
 
+import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.global.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,5 +22,15 @@ public class Article extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_img_id")
+    private ArticleImg articleImg;
+
     protected Article() {}
+
+    public Article(ArticleRequestDTO requestDTO) {
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContent();
+        this.category = requestDTO.getCategory();
+    }
 }
