@@ -33,16 +33,8 @@ public class MemberService {
             MemberRoleEnum.ADMIN
     );
 
-    // 비밀번호 검증 패턴
-    private static final String PASSWORD_PATTERN = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_~]).{8,15}$";
-    private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
-
     public ResponseDTO signup(SignupRequestDTO requestDTO) {
-        // 비밀번호 검증
         String password = requestDTO.getPassword();
-        if (!pattern.matcher(password).matches()) {
-            throw new IllegalArgumentException("비밀번호는 영어 대소문자, 숫자, 특수문자를 포함한 8~15자리 입니다.");
-        }
 
         // 비밀번호 암호화
         password = passwordEncoder.encode(requestDTO.getPassword());
