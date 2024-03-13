@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -117,9 +118,12 @@ public class ArticleService {
 
     // 게시글 카테고리별 조회
     @Transactional(readOnly = true)
-    public List<ArticleResponseDTO> getByCategory(Category categoryEnumValue) {
-        List<Article> articles = articleRepository.findByCategory(categoryEnumValue);
-
-        return articles.stream().map(ArticleResponseDTO::new).toList();
+    public List<ArticleResponseDTO> getByCategory(String category) {
+        List<Article> articles = new ArrayList<>();
+        if (Category.contains(category)) {
+            articles = articleRepository.findByCategory(Category.valueOf(category));
+        } else {
+            articles = articleRepository.findAll();
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.newnation.article.controller;
 
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
-import com.newnation.article.entity.Category;
 import com.newnation.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,16 +55,6 @@ public class ArticleController {
             return ResponseEntity.created(location).body(responseDTO);
     }
 
-//    @PostMapping
-//    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
-//        try {
-//            ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
-//
-//            return ResponseEntity.ok(responseDTO);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(400).body(e.getMessage());
-//        }
-//    }
 
     // 게시글 전체 조회
     @GetMapping
@@ -85,11 +74,11 @@ public class ArticleController {
     }
 
     // 게시글 카테고리별 조회
-    @GetMapping("/category/{categoryEnumValue}")
+    @GetMapping("/category")
     public ResponseEntity<List<ArticleResponseDTO>> getByCategory(
-            @PathVariable Category categoryEnumValue
+            @RequestParam("category") String category
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(articleService.getByCategory(categoryEnumValue));
+                .body(articleService.getByCategory(category));
     }
 }

@@ -14,4 +14,14 @@ public enum Category {
     Category(String value) {
         this.value = value;
     }
+
+    public static boolean contains(String queryString) {
+        for (Category category : values()) {
+            if (category.value.equalsIgnoreCase(queryString)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
