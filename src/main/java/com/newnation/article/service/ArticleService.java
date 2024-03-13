@@ -91,10 +91,15 @@ public class ArticleService {
         return articleRepository.findById(articleId).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
     }
+
+    // 게시글 전체 조회
+    @Transactional(readOnly = true)
     public List<ArticleResponseDTO> getAllArticles() {
         return articleRepository.findAll().stream().map(ArticleResponseDTO::new).toList();
     }
 
+    // 게시글 상세 조회
+    @Transactional(readOnly = true)
     public ArticleResponseDTO getArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new NullPointerException("존재하지 않는 게시글입니다.")
@@ -110,6 +115,8 @@ public class ArticleService {
                 .build();
     }
 
+    // 게시글 카테고리별 조회
+    @Transactional(readOnly = true)
     public List<ArticleResponseDTO> getByCategory(Category categoryEnumValue) {
         List<Article> articles = articleRepository.findByCategory(categoryEnumValue);
 

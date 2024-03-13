@@ -39,7 +39,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
+    // 게시글 작성
     @PostMapping
     public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
         try {
@@ -51,13 +51,14 @@ public class ArticleController {
         }
     }
 
-
-    @GetMapping("")
+    // 게시글 전체 조회
+    @GetMapping
     public ResponseEntity<List<ArticleResponseDTO>> getAllArticles() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.getAllArticles());
     }
 
+    // 게시글 상세 조회
     @GetMapping("/{articleId}")
     public ResponseEntity<ArticleResponseDTO> getArticle(
             @PathVariable Long articleId
@@ -66,6 +67,7 @@ public class ArticleController {
                 .body(articleService.getArticle(articleId));
     }
 
+    // 게시글 카테고리별 조회
     @GetMapping("/category/{categoryEnumValue}")
     public ResponseEntity<List<ArticleResponseDTO>> getByCategory(
             @PathVariable Category categoryEnumValue
