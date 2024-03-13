@@ -19,4 +19,7 @@ public class ArticleImg {
 
     @Column(nullable = false)
     private String oriImgName;
+
+    @OneToOne(mappedBy = "articleImg")
+    private Article article;
 }

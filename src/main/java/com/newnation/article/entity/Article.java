@@ -21,5 +21,8 @@ public class Article extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @OneToOne
+    private ArticleImg articleImg;
+
     protected Article() {}
 }
