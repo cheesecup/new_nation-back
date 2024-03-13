@@ -6,11 +6,13 @@ import com.newnation.article.entity.Article;
 import com.newnation.article.entity.ArticleImg;
 import com.newnation.article.entity.Category;
 import com.newnation.article.repository.ArticleRepository;
+import com.newnation.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 
 @RequiredArgsConstructor
 @Service
@@ -89,7 +91,7 @@ public class ArticleService {
     // 게시글 존재 메서드
     private Article articleExists(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(() ->
-                new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+                new NotFoundException("해당 게시글을 찾을 수 없습니다."));
     }
 
     // 게시글 전체 조회
@@ -101,9 +103,7 @@ public class ArticleService {
     // 게시글 상세 조회
     @Transactional(readOnly = true)
     public ArticleResponseDTO getArticle(Long articleId) {
-        Article article = articleRepository.findById(articleId).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 게시글입니다.")
-        );
+        Article article = articleExists(articleId);
 
         return ArticleResponseDTO.builder()
                 .articleId(article.getArticleId())

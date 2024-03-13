@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,18 +44,28 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 게시글 작성
+    // 게시글 등록
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
-        try {
+    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
             ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
-            return ResponseEntity.ok(responseDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(responseDTO.getArticleId())
+                .toUri();
+            return ResponseEntity.created(location).body(responseDTO);
     }
+
+//    @PostMapping
+//    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
+//        try {
+//            ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
+//
+//            return ResponseEntity.ok(responseDTO);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(400).body(e.getMessage());
+//        }
+//    }
 
     // 게시글 전체 조회
     @GetMapping
