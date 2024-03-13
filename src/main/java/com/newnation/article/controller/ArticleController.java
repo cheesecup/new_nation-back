@@ -7,6 +7,7 @@ import com.newnation.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class ArticleController {
 
     // 게시글 수정
     @PutMapping("/{articleId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
         return  ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.updateArticle(articleId, requestDTO));
@@ -30,6 +32,7 @@ public class ArticleController {
 
     // 게시글 삭제
     @DeleteMapping("/{articleId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) throws Exception {
         articleService.deleteArticle(articleId);
 
@@ -41,6 +44,7 @@ public class ArticleController {
 
     // 게시글 작성
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
         try {
             ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
@@ -60,6 +64,7 @@ public class ArticleController {
 
     // 게시글 상세 조회
     @GetMapping("/{articleId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ArticleResponseDTO> getArticle(
             @PathVariable Long articleId
     ) {
