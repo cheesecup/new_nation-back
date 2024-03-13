@@ -125,5 +125,7 @@ public class ArticleService {
         } else {
             articles = articleRepository.findAll();
         }
+
+        return articles.stream().map(ArticleResponseDTO::new).toList();
     }
 }
