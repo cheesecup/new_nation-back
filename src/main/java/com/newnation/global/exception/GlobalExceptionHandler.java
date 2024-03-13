@@ -3,6 +3,7 @@ package com.newnation.global.exception;
 import com.newnation.global.response.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +41,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 restApiException,
                 HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<RestApiException> accessDeniedExceptionHandler(AccessDeniedException e) {
+        RestApiException restApiException = new RestApiException(e.getMessage(), HttpStatus.FORBIDDEN.value());
+        return new ResponseEntity<>(
+                restApiException,
+                HttpStatus.FORBIDDEN
         );
     }
 
