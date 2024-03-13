@@ -22,11 +22,15 @@ public class Article extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "article_img_id")
     private ArticleImg articleImg;
 
     protected Article() {}
+
+    public void setArticleImg(ArticleImg articleImg) {
+        this.articleImg = articleImg;
+    }
 
     public void updateArticle(ArticleRequestDTO requestDTO) {
         this.title = requestDTO.getTitle();
