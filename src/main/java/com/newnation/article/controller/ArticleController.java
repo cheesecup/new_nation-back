@@ -29,14 +29,14 @@ public class ArticleController {
 
     // 게시글 수정
     @PutMapping("/{articleId}")
-    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @RequestBody ArticleRequestDTO requestDTO) {
+    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
         return  ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.updateArticle(articleId, requestDTO));
     }
 
     // 게시글 삭제
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) {
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) throws Exception {
         articleService.deleteArticle(articleId);
 
         Map<String, String> response = new HashMap<>();

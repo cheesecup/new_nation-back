@@ -51,7 +51,7 @@ public class ArticleImgService {
         return articleImg;
     }
 
-    private ArticleImgResponseDTO upload(MultipartFile img) throws Exception {
+    public ArticleImgResponseDTO upload(MultipartFile img) throws Exception {
         String oriImgName = img.getOriginalFilename(); //이미지 원본 이름
         String savedImgName = "";
         String imgUrl = "";
@@ -77,7 +77,7 @@ public class ArticleImgService {
                 .build();
     }
 
-    private void deleteImg(String imgUrl) throws Exception {
+    public void deleteImg(String imgUrl) throws Exception {
         File img = new File(imgUrl);
 
         if (img.exists()) {
