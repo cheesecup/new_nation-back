@@ -6,12 +6,14 @@ import com.newnation.article.entity.Article;
 import com.newnation.article.entity.ArticleImg;
 import com.newnation.article.entity.Category;
 import com.newnation.article.repository.ArticleRepository;
+import com.newnation.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @RequiredArgsConstructor
 @Service
@@ -21,7 +23,7 @@ public class ArticleService {
     private final ArticleImgService articleImgService;
 
     @Transactional
-    public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) {
+    public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) throws Exception {
         // 관리자 인증 -> 보류
 
         // 게시글 조회
@@ -54,7 +56,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) {
+    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) throws Exception {
         // 이미지 저장
         ArticleImg articleImg = articleImgService.createArticleImg(requestDTO.getImg());
 
@@ -71,7 +73,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) {
+    public void deleteArticle(Long articleId) throws Exception {
         // 관리자 인증 -> 보류
 
         // 게시글 조회
@@ -90,16 +92,19 @@ public class ArticleService {
     // 게시글 존재 메서드
     private Article articleExists(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(() ->
-                new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+                new NotFoundException("해당 게시글을 찾을 수 없습니다."));
     }
+
+    // 게시글 전체 조회
+    @Transactional(readOnly = true)
     public List<ArticleResponseDTO> getAllArticles() {
         return articleRepository.findAll().stream().map(ArticleResponseDTO::new).toList();
     }
 
+    // 게시글 상세 조회
+    @Transactional(readOnly = true)
     public ArticleResponseDTO getArticle(Long articleId) {
-        Article article = articleRepository.findById(articleId).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 게시글입니다.")
-        );
+        Article article = articleExists(articleId);
 
         return ArticleResponseDTO.builder()
                 .articleId(article.getArticleId())
@@ -111,6 +116,8 @@ public class ArticleService {
                 .build();
     }
 
+    // 게시글 카테고리별 조회
+    @Transactional(readOnly = true)
     public List<ArticleResponseDTO> getByCategory(String category) {
         List<Article> articles = new ArrayList<>();
         if (Category.contains(category)) {
@@ -118,7 +125,5 @@ public class ArticleService {
         } else {
             articles = articleRepository.findAll();
         }
-
-        return articles.stream().map(ArticleResponseDTO::new).toList();
     }
 }

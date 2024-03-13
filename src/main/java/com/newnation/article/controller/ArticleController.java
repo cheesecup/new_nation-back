@@ -6,8 +6,11 @@ import com.newnation.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +25,16 @@ public class ArticleController {
 
     // 게시글 수정
     @PutMapping("/{articleId}")
-    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
         return  ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.updateArticle(articleId, requestDTO));
     }
 
     // 게시글 삭제
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) throws Exception {
         articleService.deleteArticle(articleId);
 
         Map<String, String> response = new HashMap<>();
@@ -38,22 +43,29 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
+    // 게시글 등록
     @PostMapping
-    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
-        ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
+    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
+            ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
-        return ResponseEntity.ok(responseDTO);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(responseDTO.getArticleId())
+                .toUri();
+            return ResponseEntity.created(location).body(responseDTO);
     }
 
 
-    @GetMapping("")
+    // 게시글 전체 조회
+    @GetMapping
     public ResponseEntity<List<ArticleResponseDTO>> getAllArticles() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.getAllArticles());
     }
 
+    // 게시글 상세 조회
     @GetMapping("/{articleId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ArticleResponseDTO> getArticle(
             @PathVariable Long articleId
     ) {
@@ -61,6 +73,7 @@ public class ArticleController {
                 .body(articleService.getArticle(articleId));
     }
 
+    // 게시글 카테고리별 조회
     @GetMapping("/category")
     public ResponseEntity<List<ArticleResponseDTO>> getByCategory(
             @RequestParam("category") String category
