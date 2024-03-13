@@ -45,6 +45,7 @@ public class ArticleController {
 
     // 게시글 등록
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
             ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
