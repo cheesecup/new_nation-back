@@ -1,5 +1,6 @@
 package com.newnation.article.dto;
 
+import com.newnation.article.entity.Article;
 import com.newnation.article.entity.Category;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ public class ArticleResponseDTO {
     private String content;
     private Category category;
     private LocalDateTime createdAt;
-    private String imgUrl;
+    private String img;
 
     public ArticleResponseDTO() {}
 
@@ -24,6 +25,15 @@ public class ArticleResponseDTO {
         this.content = content;
         this.category = category;
         this.createdAt = createdAt;
-        this.imgUrl = imgUrl;
+        this.img = imgUrl;
+    }
+
+    public ArticleResponseDTO(Article article) {
+        this.articleId = article.getArticleId();
+        this.title = article.getTitle();
+        this.content = article.getContent();
+        this.category = article.getCategory();
+        this.createdAt = article.getCreatedAt();
+        this.img = article.getArticleImg().getImgUrl();
     }
 }

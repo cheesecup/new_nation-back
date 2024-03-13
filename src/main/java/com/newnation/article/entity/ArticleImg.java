@@ -19,4 +19,18 @@ public class ArticleImg {
 
     @Column(nullable = false)
     private String oriImgName;
+
+    protected ArticleImg() {}
+
+    public ArticleImg(String imgUrl, String savedImgName, String oriImgName) {
+        this.imgUrl = imgUrl;
+        this.savedImgName = savedImgName;
+        this.oriImgName = oriImgName;
+    }
+
+    public void updateArticleImg(String imgUrl, String savedImgName, String oriImgName) {
+        this.imgUrl = imgUrl;
+        this.savedImgName = savedImgName;
+        this.oriImgName = oriImgName;
+    }
 }
