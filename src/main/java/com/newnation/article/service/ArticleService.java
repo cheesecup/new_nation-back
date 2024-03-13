@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class ArticleService {
     private final ArticleImgService articleImgService;
 
     @Transactional
-    public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) throws Exception {
+    public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) {
         // 관리자 인증 -> 보류
 
         // 게시글 조회
@@ -53,7 +54,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) throws Exception {
+    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) {
         // 이미지 저장
         ArticleImg articleImg = articleImgService.createArticleImg(requestDTO.getImg());
 
@@ -70,7 +71,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) throws Exception {
+    public void deleteArticle(Long articleId) {
         // 관리자 인증 -> 보류
 
         // 게시글 조회
@@ -110,8 +111,13 @@ public class ArticleService {
                 .build();
     }
 
-    public List<ArticleResponseDTO> getByCategory(Category categoryEnumValue) {
-        List<Article> articles = articleRepository.findByCategory(categoryEnumValue);
+    public List<ArticleResponseDTO> getByCategory(String category) {
+        List<Article> articles = new ArrayList<>();
+        if (Category.contains(category)) {
+            articles = articleRepository.findByCategory(Category.valueOf(category));
+        } else {
+            articles = articleRepository.findAll();
+        }
 
         return articles.stream().map(ArticleResponseDTO::new).toList();
     }
