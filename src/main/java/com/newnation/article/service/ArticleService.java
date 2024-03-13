@@ -1,13 +1,10 @@
 package com.newnation.article.service;
 
-import com.newnation.article.dto.ArticleResponseDTO;
-import com.newnation.article.entity.Article;
-import com.newnation.article.entity.Category;
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
 import com.newnation.article.entity.Article;
 import com.newnation.article.entity.ArticleImg;
-import com.newnation.article.repository.ArticleImgRepository;
+import com.newnation.article.entity.Category;
 import com.newnation.article.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

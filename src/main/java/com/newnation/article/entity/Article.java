@@ -22,9 +22,6 @@ public class Article extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToOne
-    private ArticleImg articleImg;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "article_img_id")
     private ArticleImg articleImg;
