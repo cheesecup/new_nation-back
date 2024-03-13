@@ -1,5 +1,6 @@
 package com.newnation.article.entity;
 
+import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.global.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,5 +25,26 @@ public class Article extends TimeStamped {
     @OneToOne
     private ArticleImg articleImg;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "article_img_id")
+    private ArticleImg articleImg;
+
     protected Article() {}
+
+    public void setArticleImg(ArticleImg articleImg) {
+        this.articleImg = articleImg;
+    }
+
+    public void updateArticle(ArticleRequestDTO requestDTO) {
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContent();
+        this.category = requestDTO.getCategory();
+    }
+
+    public Article(ArticleRequestDTO requestDTO, ArticleImg articleImg) {
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContent();
+        this.category = requestDTO.getCategory();
+        this.articleImg = articleImg;
+    }
 }
