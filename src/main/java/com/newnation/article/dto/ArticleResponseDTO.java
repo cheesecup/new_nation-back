@@ -27,4 +27,13 @@ public class ArticleResponseDTO {
         this.createdAt = createdAt;
         this.imgUrl = imgUrl;
     }
+
+    public ArticleResponseDTO(Article article) {
+        this.articleId = article.getArticleId();
+        this.title = article.getTitle();
+        this.content = article.getContent();
+        this.category = article.getCategory();
+        this.createdAt = article.getCreatedAt();
+        this.imgUrl = article.getArticleImg().getImgUrl();
+    }
 }
