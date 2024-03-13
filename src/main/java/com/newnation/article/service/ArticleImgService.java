@@ -3,7 +3,9 @@ package com.newnation.article.service;
 import com.newnation.article.dto.ArticleImgResponseDTO;
 import com.newnation.article.entity.ArticleImg;
 import com.newnation.article.repository.ArticleImgRepository;
+import com.newnation.global.exception.ImgSaveFailed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,8 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ArticleImgService {
@@ -23,7 +27,7 @@ public class ArticleImgService {
     private String imgLocation;
 
     @Transactional
-    public ArticleImg createArticleImg(MultipartFile img) throws Exception {
+    public ArticleImg createArticleImg(MultipartFile img) {
         // 이미지 업로드
         ArticleImgResponseDTO articleImgResponseDTO = upload(img);
 
@@ -33,7 +37,7 @@ public class ArticleImgService {
     }
 
     @Transactional
-    public ArticleImg updateArticleImg(Long articleImgId, MultipartFile img) throws Exception {
+    public ArticleImg updateArticleImg(Long articleImgId, MultipartFile img) {
         ArticleImg articleImg = articleImgRepository.findById(articleImgId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다."));
 
@@ -51,11 +55,23 @@ public class ArticleImgService {
         return articleImg;
     }
 
-    public ArticleImgResponseDTO upload(MultipartFile img) throws Exception {
-        String oriImgName = img.getOriginalFilename(); //이미지 원본 이름
+    // 이미지 파일 저장
+    public ArticleImgResponseDTO upload(MultipartFile img) {
+        if (img.isEmpty()) {
+            throw new ImgSaveFailed("이미지 파일이 없습니다.");
+        }
+
+        String oriImgName = img.getOriginalFilename();
         String savedImgName = "";
         String imgUrl = "";
-        if (!oriImgName.isEmpty()) {
+
+        // 이미지 저장 폴더가 없을시 폴더 생성
+        File folder = new File(imgLocation);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        if (oriImgName != null && !oriImgName.isEmpty()) {
 
             UUID uuid = UUID.randomUUID();
             String extension = oriImgName.substring(oriImgName.lastIndexOf(".")); //확장자 자르기 추출
@@ -63,9 +79,13 @@ public class ArticleImgService {
             savedImgName = uuid.toString() + extension;
             String uploadImgFullPath = imgLocation + "/" + savedImgName;
 
-            FileOutputStream fileOutputStream = new FileOutputStream(uploadImgFullPath);
-            fileOutputStream.write(img.getBytes());
-            fileOutputStream.close();
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(uploadImgFullPath);
+                fileOutputStream.write(img.getBytes());
+                fileOutputStream.close();
+            } catch (IOException e) {
+                throw new ImgSaveFailed("이미지 파일 저장 실패");
+            }
 
             imgUrl = imgLocation + "/" + savedImgName;
         }
@@ -77,7 +97,8 @@ public class ArticleImgService {
                 .build();
     }
 
-    public void deleteImg(String imgUrl) throws Exception {
+    // 이미지 파일 삭제
+    public void deleteImg(String imgUrl) {
         File img = new File(imgUrl);
 
         if (img.exists()) {

@@ -2,7 +2,6 @@ package com.newnation.article.controller;
 
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
-import com.newnation.article.entity.Category;
 import com.newnation.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,14 +22,14 @@ public class ArticleController {
 
     // 게시글 수정
     @PutMapping("/{articleId}")
-    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
+    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) {
         return  ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.updateArticle(articleId, requestDTO));
     }
 
     // 게시글 삭제
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) throws Exception {
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) {
         articleService.deleteArticle(articleId);
 
         Map<String, String> response = new HashMap<>();
@@ -42,13 +41,9 @@ public class ArticleController {
 
     @PostMapping
     public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) {
-        try {
-            ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
+        ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
-            return ResponseEntity.ok(responseDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        return ResponseEntity.ok(responseDTO);
     }
 
 
@@ -66,11 +61,11 @@ public class ArticleController {
                 .body(articleService.getArticle(articleId));
     }
 
-    @GetMapping("/category/{categoryEnumValue}")
+    @GetMapping("/category")
     public ResponseEntity<List<ArticleResponseDTO>> getByCategory(
-            @PathVariable Category categoryEnumValue
+            @RequestParam("category") String category
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(articleService.getByCategory(categoryEnumValue));
+                .body(articleService.getByCategory(category));
     }
 }
