@@ -5,12 +5,12 @@ import lombok.Getter;
 @Getter
 public class ErrorResponseDTO<T> {
     private int statusCode;
-    private String message;
+    private String msg;
     private T data;
 
-    public ErrorResponseDTO(int statusCode, String message, T data) {
+    public ErrorResponseDTO(int statusCode, String msg, T data) {
         this.statusCode = statusCode;
-        this.message = message;
+        this.msg = msg;
         this.data = data;
     }
 }
