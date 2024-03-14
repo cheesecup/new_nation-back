@@ -22,6 +22,7 @@ import java.util.UUID;
 public class ArticleImgService {
 
     private final ArticleImgRepository articleImgRepository;
+    private final S3FileService s3FileService;
 
     @Value("${imgLocation}")
     private String imgLocation;
@@ -29,7 +30,7 @@ public class ArticleImgService {
     @Transactional
     public ArticleImg createArticleImg(MultipartFile img) {
         // 이미지 업로드
-        ArticleImgResponseDTO articleImgResponseDTO = upload(img);
+        ArticleImgResponseDTO articleImgResponseDTO = s3FileService.uploadFile(img);
 
         return articleImgRepository.save(new ArticleImg(articleImgResponseDTO.getImgUrl(),
                 articleImgResponseDTO.getSavedImgName(),
@@ -42,10 +43,10 @@ public class ArticleImgService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다."));
 
         // 기존 이미지 삭제
-        deleteImg(articleImg.getImgUrl());
+        s3FileService.deleteFile(articleImg.getSavedImgName());
 
         // 수정 이미지 업로드
-        ArticleImgResponseDTO articleImgResponseDTO = upload(img);
+        ArticleImgResponseDTO articleImgResponseDTO = s3FileService.uploadFile(img);
         
         // 게시글 이미지 정보 수정
         articleImg.updateArticleImg(articleImgResponseDTO.getImgUrl(),

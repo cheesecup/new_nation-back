@@ -21,6 +21,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ArticleImgService articleImgService;
+    private final S3FileService s3FileService;
 
     @Transactional
     public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) throws Exception {
@@ -84,8 +85,8 @@ public class ArticleService {
 
         // 게시글 연관된 이미지 삭제
         if (article.getArticleImg() != null) {
-            String imgUrl = article.getArticleImg().getImgUrl();
-            articleImgService.deleteImg(imgUrl);
+            String savedImgName = article.getArticleImg().getSavedImgName();
+            s3FileService.deleteFile(savedImgName);
         }
     }
 
