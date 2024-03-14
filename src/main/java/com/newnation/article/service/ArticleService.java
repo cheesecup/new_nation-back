@@ -5,6 +5,7 @@ import com.newnation.article.dto.ArticleResponseDTO;
 import com.newnation.article.entity.Article;
 import com.newnation.article.entity.ArticleImg;
 import com.newnation.article.entity.Category;
+import com.newnation.article.repository.ArticleImgRepository;
 import com.newnation.article.repository.ArticleRepository;
 import com.newnation.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,11 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final ArticleImgService articleImgService;
+    private final ArticleImgRepository articleImgRepository;
+    private final S3FileService s3FileService;
 
     @Transactional
-    public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) throws Exception {
-        // 관리자 인증 -> 보류
+    public ArticleResponseDTO updateArticle(Long articleId, ArticleRequestDTO requestDTO) {
 
         // 게시글 조회
         Article article = articleExists(articleId);
@@ -32,16 +33,26 @@ public class ArticleService {
         // 게시글 수정
         article.updateArticle(requestDTO);
 
-        // 이미지 수정
-        ArticleImg articleImg;
-        if (requestDTO.getImg() != null) {
-            articleImg = articleImgService.updateArticleImg(article.getArticleImg().getArticleImgId(), requestDTO.getImg());
-        } else {
-            articleImg = article.getArticleImg();
+        // 기존 이미지 이름
+        String savedImgName = article.getArticleImg().getSavedImgName();
+
+        // articleImg 테이블 데이터 수정
+        if (requestDTO.getImgUrl() != null) {
+            if (!article.getArticleImg().getImgUrl().equals(requestDTO.getImgUrl())) {
+                // 수정
+                ArticleImg articleImg = articleImgRepository.findByImgUrl(requestDTO.getImgUrl());
+                // imgUrl 을 기반으로 ArticleImg 엔티티를 찾음
+                if (articleImg == null) {
+                    // 해당 imgUrl 에 해당하는 이미지가 없으면 예외 처리
+                    throw new NotFoundException("해당 이미지를 찾을 수 없습니다.");
+                }
+                // 게시글에 수정된 이미지 설정(연관관계)
+                article.setArticleImg(articleImg);
+            }
         }
 
-        // 게시글에 수정된 이미지 설정(연관관계)
-        article.setArticleImg(articleImg);
+        articleImgRepository.deleteBySavedImgName(savedImgName); // 기존 이미지 데이터 삭제
+        s3FileService.deleteFile(savedImgName); // S3 기존 이미지 삭제
 
         ArticleResponseDTO responseDTO = ArticleResponseDTO.builder()
                           .articleId(article.getArticleId())
@@ -56,9 +67,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) throws Exception {
-        // 이미지 저장
-        ArticleImg articleImg = articleImgService.createArticleImg(requestDTO.getImg());
+    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) {
+        // 이미지 정보 저장
+        ArticleImg articleImg = articleImgRepository.findByImgUrl(requestDTO.getImgUrl());
 
         Article article = articleRepository.save(new Article(requestDTO, articleImg));
 
@@ -73,9 +84,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) throws Exception {
-        // 관리자 인증 -> 보류
-
+    public void deleteArticle(Long articleId) {
         // 게시글 조회
         Article article = articleExists(articleId);
 
@@ -84,15 +93,9 @@ public class ArticleService {
 
         // 게시글 연관된 이미지 삭제
         if (article.getArticleImg() != null) {
-            String imgUrl = article.getArticleImg().getImgUrl();
-            articleImgService.deleteImg(imgUrl);
+            String savedImgName = article.getArticleImg().getSavedImgName();
+            s3FileService.deleteFile(savedImgName);
         }
-    }
-
-    // 게시글 존재 메서드
-    private Article articleExists(Long articleId) {
-        return articleRepository.findById(articleId).orElseThrow(() ->
-                new NotFoundException("해당 게시글을 찾을 수 없습니다."));
     }
 
     // 게시글 전체 조회
@@ -127,5 +130,11 @@ public class ArticleService {
         }
 
         return articles.stream().map(ArticleResponseDTO::new).toList();
+    }
+
+    // 게시글 존재 메서드
+    private Article articleExists(Long articleId) {
+        return articleRepository.findById(articleId).orElseThrow(() ->
+                new NotFoundException("해당 게시글을 찾을 수 없습니다."));
     }
 }
