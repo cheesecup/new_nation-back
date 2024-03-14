@@ -14,7 +14,7 @@ public class ArticleResponseDTO {
     private String content;
     private Category category;
     private LocalDateTime createdAt;
-    private String img;
+    private String imgUrl;
 
     public ArticleResponseDTO() {}
 
@@ -25,7 +25,7 @@ public class ArticleResponseDTO {
         this.content = content;
         this.category = category;
         this.createdAt = createdAt;
-        this.img = imgUrl;
+        this.imgUrl = imgUrl;
     }
 
     public ArticleResponseDTO(Article article) {
@@ -34,6 +34,6 @@ public class ArticleResponseDTO {
         this.content = article.getContent();
         this.category = article.getCategory();
         this.createdAt = article.getCreatedAt();
-        this.img = article.getArticleImg().getImgUrl();
+        this.imgUrl = article.getArticleImg().getImgUrl();
     }
 }
