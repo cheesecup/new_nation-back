@@ -61,6 +61,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/user/**").permitAll() // 회원가입, 로그인 요청 허가
                         .requestMatchers(HttpMethod.GET, "/api/article/**").permitAll() // 조회 요청 허가
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "swagger-ui.html").permitAll()
+                        .requestMatchers("/api/img/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
