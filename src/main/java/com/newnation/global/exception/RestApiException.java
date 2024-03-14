@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class RestApiException {
-    private String message;
+    private String msg;
     private int statusCode;
 
 }
