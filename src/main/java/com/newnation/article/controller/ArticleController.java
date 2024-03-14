@@ -1,13 +1,16 @@
 package com.newnation.article.controller;
 
+import com.newnation.article.dto.ArticleImgResponseDTO;
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
 import com.newnation.article.service.ArticleService;
+import com.newnation.article.service.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -21,7 +24,7 @@ import java.util.Map;
 public class ArticleController {
 
     private final ArticleService articleService;
-
+    private final S3FileService s3FileService;
 
     // 게시글 수정
     @PutMapping("/{articleId}")
@@ -81,5 +84,13 @@ public class ArticleController {
     ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.getByCategory(category));
+    }
+
+    // 게시글 이미지 업로드
+    @PostMapping("/img")
+    public ResponseEntity uploadImg(@RequestPart("img") MultipartFile img) {
+        ArticleImgResponseDTO responseDTO = s3FileService.uploadFile(img);
+
+        return ResponseEntity.ok(responseDTO);
     }
 }

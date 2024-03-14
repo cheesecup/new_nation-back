@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public class SuccessResponseDTO<T> {
     private int statusCode = 200;
-    private String message;
+    private String msg;
     private T data;
 
-    public SuccessResponseDTO(String message, T data) {
-        this.message = message;
+    public SuccessResponseDTO(String msg, T data) {
+        this.msg = msg;
         this.data = data;
     }
 }
