@@ -27,12 +27,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    // ADMIN_TOKEN -> 환경변수 값으로 변경 예정
-    private static final Map<String, MemberRoleEnum> tokenRoleMap = Map.of(
-            "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC",
-            MemberRoleEnum.ADMIN
-    );
-
     public ResponseDTO signup(SignupRequestDTO requestDTO) {
         String password = requestDTO.getPassword();
 
@@ -46,10 +40,7 @@ public class MemberService {
             throw new IllegalArgumentException("중복된 이메일 입니다.");
         }
 
-        // 관리자 여부 확인 및 권한 부여
-        MemberRoleEnum role = determineRoleByToken(requestDTO.getAdminToken());
-
-        Member member = new Member(requestDTO.getEmail(), password, requestDTO.getNickname(), role);
+        Member member = new Member(requestDTO.getEmail(), password, requestDTO.getNickname(), MemberRoleEnum.USER);
 
         memberRepository.save(member);
 
@@ -71,16 +62,5 @@ public class MemberService {
         String token = jwtUtil.createToken(member.getEmail(), member.getRole());
 
         return new LoginResponseDTO(token, ResponseMsg.LOGIN_SUCCESS.getMsg());
-    }
-
-    private MemberRoleEnum determineRoleByToken(String adminToken) {
-        if (adminToken == null) {
-            return MemberRoleEnum.USER;
-        }
-        MemberRoleEnum role = tokenRoleMap.get(adminToken);
-        if (role == null) {
-            throw new IllegalArgumentException("admin token이 맞지 않습니다.");
-        }
-        return role;
     }
 }

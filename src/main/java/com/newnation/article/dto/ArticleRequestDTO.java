@@ -12,5 +12,5 @@ public class ArticleRequestDTO {
     private String title;
     private String content;
     private Category category;
-    private String imgUrl; // 수정할 부분
+    private String imgUrl;
 }
