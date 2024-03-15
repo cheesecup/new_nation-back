@@ -90,6 +90,7 @@ public class ArticleController {
 
     // 게시글 이미지 업로드
     @PostMapping("/img")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity uploadImg(@RequestPart("img") MultipartFile img) {
         ArticleImgResponseDTO responseDTO = articleImgService.createArticleImg(img);
 

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 public class ArticleResponseDTO {
@@ -13,7 +14,7 @@ public class ArticleResponseDTO {
     private String title;
     private String content;
     private Category category;
-    private LocalDateTime createdAt;
+    private String createdAt;
     private String imgUrl;
 
     public ArticleResponseDTO() {}
@@ -24,7 +25,7 @@ public class ArticleResponseDTO {
         this.title = title;
         this.content = content;
         this.category = category;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.imgUrl = imgUrl;
     }
 
@@ -33,7 +34,7 @@ public class ArticleResponseDTO {
         this.title = article.getTitle();
         this.content = article.getContent();
         this.category = article.getCategory();
-        this.createdAt = article.getCreatedAt();
+        this.createdAt = article.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.imgUrl = article.getArticleImg().getImgUrl();
     }
 }
