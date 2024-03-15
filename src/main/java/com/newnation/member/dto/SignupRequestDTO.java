@@ -20,5 +20,5 @@ public class SignupRequestDTO {
     private String password;
 
     private String nickname;
-    private String adminToken;
+
 }
