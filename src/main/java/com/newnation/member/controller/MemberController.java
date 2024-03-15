@@ -1,19 +1,15 @@
 package com.newnation.member.controller;
 
-import com.newnation.member.dto.LoginRequestDTO;
-import com.newnation.member.dto.LoginResponseDTO;
-import com.newnation.member.dto.ResponseDTO;
-import com.newnation.member.dto.SignupRequestDTO;
+import com.newnation.member.dto.*;
 import com.newnation.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j(topic = "회원가입, 로그인")
 @RestController
@@ -36,5 +32,14 @@ public class MemberController {
     ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(memberService.login(requestDTO));
+    }
+
+    // 유저 인증 확인
+    @GetMapping
+    public ResponseEntity<RoleResponseDTO> checkMemberRole(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(memberService.checkMemberRole(userDetails));
     }
 }

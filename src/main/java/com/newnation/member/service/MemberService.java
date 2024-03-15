@@ -1,22 +1,19 @@
 package com.newnation.member.service;
 
+import com.newnation.global.exception.NotFoundException;
 import com.newnation.global.jwt.JwtUtil;
-import com.newnation.member.dto.LoginRequestDTO;
-import com.newnation.member.dto.LoginResponseDTO;
-import com.newnation.member.dto.ResponseDTO;
-import com.newnation.member.dto.SignupRequestDTO;
+import com.newnation.member.dto.*;
 import com.newnation.member.entity.Member;
 import com.newnation.member.entity.MemberRoleEnum;
 import com.newnation.member.entity.ResponseMsg;
 import com.newnation.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Slf4j(topic = "회원가입, 로그인 서비스 로직")
 @Service
@@ -28,10 +25,8 @@ public class MemberService {
     private final JwtUtil jwtUtil;
 
     public ResponseDTO signup(SignupRequestDTO requestDTO) {
-        String password = requestDTO.getPassword();
-
         // 비밀번호 암호화
-        password = passwordEncoder.encode(requestDTO.getPassword());
+        String password = passwordEncoder.encode(requestDTO.getPassword());
 
         // email 중복 확인
         String email = requestDTO.getEmail();
@@ -61,6 +56,14 @@ public class MemberService {
 
         String token = jwtUtil.createToken(member.getEmail(), member.getRole());
 
-        return new LoginResponseDTO(token, ResponseMsg.LOGIN_SUCCESS.getMsg());
+        return new LoginResponseDTO(token, ResponseMsg.LOGIN_SUCCESS.getMsg(), member.getRole());
+    }
+
+    public RoleResponseDTO checkMemberRole(UserDetails userDetails) {
+        // 사용자 정보 조회
+        Member member = memberRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+
+        return new RoleResponseDTO(member.getRole());
     }
 }
