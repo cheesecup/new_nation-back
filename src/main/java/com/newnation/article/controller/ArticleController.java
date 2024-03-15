@@ -3,6 +3,8 @@ package com.newnation.article.controller;
 import com.newnation.article.dto.ArticleImgResponseDTO;
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
+import com.newnation.article.entity.ArticleImg;
+import com.newnation.article.service.ArticleImgService;
 import com.newnation.article.service.ArticleService;
 import com.newnation.article.service.S3FileService;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +26,12 @@ import java.util.Map;
 public class ArticleController {
 
     private final ArticleService articleService;
-    private final S3FileService s3FileService;
+    private final ArticleImgService articleImgService;
 
     // 게시글 수정
     @PutMapping("/{articleId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
+    public ResponseEntity<ArticleResponseDTO> updateArticle(@PathVariable Long articleId, @RequestBody ArticleRequestDTO requestDTO) {
         return  ResponseEntity.status(HttpStatus.OK)
                 .body(articleService.updateArticle(articleId, requestDTO));
     }
@@ -37,7 +39,7 @@ public class ArticleController {
     // 게시글 삭제
     @DeleteMapping("/{articleId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) throws Exception {
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Long articleId) {
         articleService.deleteArticle(articleId);
 
         Map<String, String> response = new HashMap<>();
@@ -49,7 +51,7 @@ public class ArticleController {
     // 게시글 등록
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createArticle(@ModelAttribute ArticleRequestDTO requestDTO) throws Exception {
+    public ResponseEntity createArticle(@RequestBody ArticleRequestDTO requestDTO) {
             ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -88,8 +90,9 @@ public class ArticleController {
 
     // 게시글 이미지 업로드
     @PostMapping("/img")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity uploadImg(@RequestPart("img") MultipartFile img) {
-        ArticleImgResponseDTO responseDTO = s3FileService.uploadFile(img);
+        ArticleImgResponseDTO responseDTO = articleImgService.createArticleImg(img);
 
         return ResponseEntity.ok(responseDTO);
     }
