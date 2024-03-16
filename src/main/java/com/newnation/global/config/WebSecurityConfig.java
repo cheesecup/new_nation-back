@@ -51,7 +51,7 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:80", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:80", "http://localhost:3000", "https://new-nation.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "TOKEN_ID", "X-Requested-With", "Content-Type", "Content-Length", "Cache-Control"));
