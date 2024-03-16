@@ -101,7 +101,7 @@ public class ArticleService {
     // 게시글 전체 조회
     @Transactional(readOnly = true)
     public List<ArticleResponseDTO> getAllArticles() {
-        return articleRepository.findAll().stream().map(ArticleResponseDTO::new).toList();
+        return articleRepository.findAllByOrderByArticleIdDesc().stream().map(ArticleResponseDTO::new).toList();
     }
 
     // 게시글 상세 조회
@@ -124,12 +124,11 @@ public class ArticleService {
     public List<ArticleResponseDTO> getByCategory(String category) {
         List<Article> articles = new ArrayList<>();
         if (Category.contains(category)) {
-            articles = articleRepository.findByCategory(Category.valueOf(category));
+            return articleRepository.findByCategoryOrderByArticleIdDesc(Category.valueOf(category))
+                    .stream().map(ArticleResponseDTO::new).toList();
         } else {
-            articles = articleRepository.findAll();
+            return articleRepository.findAllByOrderByArticleIdDesc().stream().map(ArticleResponseDTO::new).toList();
         }
-
-        return articles.stream().map(ArticleResponseDTO::new).toList();
     }
 
     // 게시글 존재 메서드

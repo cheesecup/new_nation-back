@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +50,13 @@ public class ArticleController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createArticle(@RequestBody ArticleRequestDTO requestDTO) {
-        ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
+            ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
-        return ResponseEntity.ok(responseDTO);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(responseDTO.getArticleId())
+                .toUri();
+            return ResponseEntity.created(location).body(responseDTO);
     }
 
 
