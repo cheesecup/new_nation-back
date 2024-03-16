@@ -3,19 +3,15 @@ package com.newnation.article.controller;
 import com.newnation.article.dto.ArticleImgResponseDTO;
 import com.newnation.article.dto.ArticleRequestDTO;
 import com.newnation.article.dto.ArticleResponseDTO;
-import com.newnation.article.entity.ArticleImg;
 import com.newnation.article.service.ArticleImgService;
 import com.newnation.article.service.ArticleService;
-import com.newnation.article.service.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,13 +48,9 @@ public class ArticleController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createArticle(@RequestBody ArticleRequestDTO requestDTO) {
-            ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
+        ArticleResponseDTO responseDTO = articleService.createArticle(requestDTO);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(responseDTO.getArticleId())
-                .toUri();
-            return ResponseEntity.created(location).body(responseDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 
 
