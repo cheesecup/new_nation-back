@@ -37,5 +37,5 @@
 ![image](https://github.com/cheesecup/new_nation-back/assets/148833676/5426c7d6-4d18-44ec-b490-b11a7acd2fed)
 ![image](https://github.com/cheesecup/new_nation-back/assets/148833676/ca07fd1b-0cfa-4cd7-8b1f-d8cf528df021)
 ![image](https://github.com/cheesecup/new_nation-back/assets/148833676/fe69f71a-95f7-4654-bb7e-4ca7114e8607)
-![image](https://github.com/cheesecup/new_nation-back/assets/148833676/14803ab9-ccb7-43f8-bb0f-5efa44791240)
+![image](https://github.com/cheesecup/new_nation-back/assets/148833676/d1463462-ba73-47d5-b5b9-d933112bccec)
 
