@@ -33,12 +33,11 @@ public class ArticleService {
         // 게시글 수정
         article.updateArticle(requestDTO);
 
-        // 기존 이미지 이름
-        String savedImgName = article.getArticleImg().getSavedImgName();
-
         // articleImg 테이블 데이터 수정
         if (requestDTO.getImgUrl() != null) {
             if (!article.getArticleImg().getImgUrl().equals(requestDTO.getImgUrl())) {
+                String savedImgName = article.getArticleImg().getSavedImgName(); // 기존 이미지 이름
+
                 // 수정
                 ArticleImg articleImg = articleImgRepository.findByImgUrl(requestDTO.getImgUrl());
                 // imgUrl 을 기반으로 ArticleImg 엔티티를 찾음
@@ -48,11 +47,12 @@ public class ArticleService {
                 }
                 // 게시글에 수정된 이미지 설정(연관관계)
                 article.setArticleImg(articleImg);
+
+                articleImgRepository.deleteBySavedImgName(savedImgName); // 기존 이미지 데이터 삭제
+                s3FileService.deleteFile(savedImgName); // S3 기존 이미지 삭제
             }
         }
 
-        articleImgRepository.deleteBySavedImgName(savedImgName); // 기존 이미지 데이터 삭제
-        s3FileService.deleteFile(savedImgName); // S3 기존 이미지 삭제
 
         ArticleResponseDTO responseDTO = ArticleResponseDTO.builder()
                           .articleId(article.getArticleId())
